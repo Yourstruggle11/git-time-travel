@@ -1,0 +1,45 @@
+{
+  "name": "git-time-travel",
+  "version": "1.0.0",
+  "description": "Git Time Travel is a powerful Node.js package that lets you manipulate the date and time of any previous Git commit in your repository. With Git Time Travel, you can easily correct mistakes or update information in your Git history without having to rewrite your entire commit history.Try Git Time Travel today and take control of your Git history!",
+  "main": "git-time-travel.js",
+  "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha --require @babel/register"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yourstruggle11/git-time-travel.git"
+  },
+  "keywords": [
+    "git",
+    "time-travel",
+    "history",
+    "commit",
+    "date",
+    "nodejs"
+  ],
+  "author": "Souvik Sen",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "figlet": "^1.5.2",
+    "ora": "^6.1.2",
+    "readline": "^1.3.0",
+    "tempfile": "^4.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.12",
+    "@babel/register": "^7.18.9",
+    "chai": "^4.3.7",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^10.2.0"
+  },
+  "bugs": {
+    "url": "https://github.com/Yourstruggle11/git-time-travel/issues"
+  },
+  "homepage": "https://github.com/Yourstruggle11/git-time-travel#readme"
+}
