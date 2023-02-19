@@ -1,9 +1,13 @@
 {
   "name": "git-time-travel",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Git Time Travel is a powerful Node.js package that lets you manipulate the date and time of any previous Git commit in your repository. With Git Time Travel, you can easily correct mistakes or update information in your Git history without having to rewrite your entire commit history.Try Git Time Travel today and take control of your Git history!",
-  "main": "git-time-travel.js",
+  "main": "git-time-travel-cli.js",
   "type": "module",
+  "preferGlobal": true,
+  "bin": {
+    "git-time-travel": "./git-time-travel-cli.js"
+  },
   "directories": {
     "test": "test"
   },

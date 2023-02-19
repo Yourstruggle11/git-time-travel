@@ -9,6 +9,7 @@ import ora from "ora";
 import { isGitRepo } from "./utils/isGitRepo.js";
 import { showSignature } from "./utils/signature.js";
 import { showHelp } from "./utils/showHelp.js";
+import { rewriteGitHistory } from "./utils/rewriteGitHistory.js";
 
 let COMMITS = 5;
 let LIMITCHUNKS = 20;
@@ -24,7 +25,6 @@ isGitRepo();
  * Show signature
  */
 showSignature();
-
 
 const args = process.argv.slice(2);
 for (let i = 0; i < args.length; i++) {
@@ -137,6 +137,8 @@ exec(`git log -n1 --pretty=format:"${datefmt}"`, (error, stdout) => {
             }
           }
 
+          let spinner;
+
           for (let i = 0; i < COLLECTION.length; i++) {
             const each = COLLECTION[i];
             let cmd = "";
@@ -146,79 +148,41 @@ exec(`git log -n1 --pretty=format:"${datefmt}"`, (error, stdout) => {
               cmd = `git filter-branch -f --env-filter '${each}' HEAD~${COMMITS}..HEAD`;
             }
             sh_file += `${cmd}\n`;
-            fs.appendFileSync("filter_branch_commands.sh", sh_file);
+            fs.appendFileSync(`filter_branch_commands_${i}.sh`, sh_file);
+            sh_file = `#!/bin/sh
+            export FILTER_BRANCH_SQUELCH_WARNING=1
+            `;
 
             if (DEBUG) {
-              let spinner = ora(
-                `Chunk ${i + 1}/${COLLECTION.length} Started`
+              spinner = ora(
+                `Chunk ${i + 1}/${COLLECTION.length} Started...`
               ).start();
-              exec("bash filter_branch_commands.sh", (error, s) => {
-                if (error) {
-                  spinner.fail(`Error: ${error}`);
-
-                  // Delete the .sh file if there is any erroe
-                  fs.unlink("filter_branch_commands.sh", (err) => {
-                    if (err) {
-                      spinner.fail(`Error: ${error}`);
-                      process.exit(1);
-                    }
-                  });
-                  process.exit(1);
-                }
-                // Delete the .sh file after the command has been executed
-                fs.unlink("filter_branch_commands.sh", (err) => {
-                  if (err) {
-                    spinner.fail(`Error: ${error}`);
-                    console.error(`Error deleting file: ${err}`);
-                    process.exit(1);
-                  }
-                  spinner.succeed(
-                    `Chunk ${i + 1}/${COLLECTION.length} Finished`,
-                    s
-                  );
-                  spinner.succeed(
-                    chalk.green.bold(
-                      "Git commit dates have been adjusted. To push your changes, do 'git push -f BRANCH NAME'."
-                    )
-                  );
-                });
-              });
+              rewriteGitHistory(
+                `filter_branch_commands_${i}.sh`,
+                i,
+                COLLECTION.length,
+                spinner
+              );
             } else {
-              let spinner = ora(
-                `Chunk ${i + 1}/${COLLECTION.length} Started`
+              spinner = ora(
+                `Chunk ${i + 1}/${COLLECTION.length} Started...`
               ).start();
-              exec("bash filter_branch_commands.sh", (error, s) => {
-                if (error) {
-                  spinner.fail(`Error: ${error}`);
-                  // Delete the .sh file if there is any erroe
-                  fs.unlink("filter_branch_commands.sh", (err) => {
-                    if (err) {
-                      spinner.fail(`Error: ${error}`);
-                      process.exit(1);
-                    }
-                  });
-                  process.exit(1);
-                }
-                // Delete the .sh file after the command has been executed
-                fs.unlink("filter_branch_commands.sh", (err) => {
-                  if (err) {
-                    spinner.fail(`Error: ${error}`);
-                    process.exit(1);
-                  }
-                  spinner.succeed(
-                    `Chunk ${i + 1}/${COLLECTION.length} Finished`,
-                    s
-                  );
-                  spinner.succeed(
-                    chalk.green.bold(
-                      "Git commit dates have been adjusted. To push your changes, do 'git push -f BRANCH NAME'."
-                    )
-                  );
-                });
-              });
+
+              rewriteGitHistory(
+                `filter_branch_commands_${i}.sh`,
+                i,
+                COLLECTION.length,
+                spinner
+              );
             }
           }
+          spinner.succeed(
+            chalk.green.bold(
+              "Git commit dates have been adjusted. To push your changes, do 'git push -f BRANCH NAME'."
+            )
+          );
           rl.close();
+          process.exit(1);
         }
       );
     });
