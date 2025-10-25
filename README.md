@@ -14,6 +14,15 @@ https://user-images.githubusercontent.com/82510209/219964886-bb020c32-d13f-479b-
 
 Git Time Travel is a powerful Node.js package that lets you manipulate the date and time of any previous Git commit in your repository. With Git Time Travel, you can easily correct mistakes or update information in your Git history without having to rewrite your entire commit history.Try Git Time Travel today and take control of your Git history!
 
+## 🆕 What's New in v1.2.0
+
+- **🎯 Interactive Mode**: Select specific commits using checkboxes
+- **💾 Auto Backup**: Create safety branches before modifications
+- **🚀 Async/Await**: Completely rewritten with modern async patterns
+- **📦 Multiple Date Formats**: Support for ISO 8601, RFC 2822, and Unix timestamps
+- **⚡ Better CLI**: Powered by Commander.js with improved arg parsing
+- **✅ CI/CD**: GitHub Actions workflow for automated testing
+
 # Prerequisites
 
 - **Git Bash** (Windows) or any bash shell (Unix/Linux/macOS). Download from [here](https://git-scm.com/downloads)
@@ -45,11 +54,14 @@ $ git-time-travel [options]
 
 | Flag | Description |
 |------|-------------|
-| `-c, --commits [number]` | Number of commits to modify (default: 5) |
-| `-l, --limit [number]` | Number of chunks to split each commit into (default: 20) |
-| `-e, --editor [editor]` | Specify the editor to use (overrides `EDITOR` and `VISUAL` env vars) |
+| `-V, --version` | Output the version number |
+| `-c, --commits <number>` | Number of commits to modify (default: 5) |
+| `-l, --limit <number>` | Number of chunks to split commits into (default: 20) |
+| `-e, --editor <editor>` | Specify the editor to use (overrides `EDITOR` and `VISUAL` env vars) |
 | `-d, --debug` | Enable debug mode for verbose output |
 | `-a, --all` | Change date for all available commits |
+| `-i, --interactive` | **NEW** Interactive mode with commit selection |
+| `-b, --backup` | **NEW** Create a backup branch before making changes |
 | `--dry-run` | Preview changes without modifying git history |
 | `-h, --help` | Display usage information |
 
@@ -87,23 +99,52 @@ $ git-time-travel -c 10
 $ git-time-travel --all
 ```
 
+### 🆕 Interactive mode with commit selection
+
+```bash
+$ git-time-travel --interactive
+```
+
+### 🆕 Create backup before modifying
+
+```bash
+$ git-time-travel --backup -c 5
+```
+
+### 🆕 Combine flags for safety
+
+```bash
+$ git-time-travel --backup --interactive --dry-run
+```
+
 ## How it Works
+
+### Standard Mode
 
 1. Run the command with your desired options
 2. Code editor will open with the commit list:
 
 <img src="./screenShots/SS2.jpeg">
 
-3. Edit the dates in the format shown (YYYY-MM-DDTHH:MM:SS+HH:MM)
+3. Edit the dates in the format shown
 4. Save the file and close the editor
-5. Press Enter in the terminal to apply changes
+5. Confirm when prompted
 6. That's it! Your commit dates have been updated.
+
+### Interactive Mode (NEW in v1.2.0)
+
+1. Run with `--interactive` flag
+2. Select specific commits using checkboxes
+3. Edit dates in your preferred editor
+4. Changes are applied only to selected commits
 
 ## Date Format
 
 Git Time Travel supports the following date formats:
-- **ISO 8601**: `2023-02-20T15:30:00+05:30`
+- **ISO 8601**: `2023-02-20T15:30:00+05:30` or `2023-02-20T15:30:00Z`
 - **Git default**: `2023-02-20 15:30:00 +0530`
+- **RFC 2822**: `Mon, 20 Feb 2023 15:30:00 +0530`
+- **Unix timestamp**: `1234567890` (seconds since epoch)
 
 ## Troubleshooting
 
