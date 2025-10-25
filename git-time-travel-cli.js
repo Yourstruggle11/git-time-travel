@@ -182,7 +182,7 @@ exec(`git log -n1 --pretty=format:"${datefmt}"`, (error, stdout) => {
             )
           );
           rl.close();
-          process.exit(1);
+          process.exit(0);
         }
       );
     });
