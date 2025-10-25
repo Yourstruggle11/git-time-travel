@@ -57,7 +57,8 @@ describe("Git time traveler", () => {
       });
   });
 
-  it("should execute the specified editor with the temporary file", () => {
+  it.skip("should execute the specified editor with the temporary file", () => {
+    // Skipped: Editor test requires manual interaction
     // Replace "vim" with the path to your preferred editor.
     const editor = "code";
     const cmd = `${editor} tempfile`;
