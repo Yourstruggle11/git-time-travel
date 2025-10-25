@@ -13,16 +13,16 @@ export const rewriteGitHistory =  (file, index, collectionLength,spinner) => {
         );
         fs.unlink(`${file}`, (err) => {
           if (err) {
-            spinner.fail(`Error: ${error}`);
+            spinner.fail(`Error: ${err}`);
             process.exit(1);
           }
         });
       } catch (error) {
         spinner.fail(`Error: ${error}`);
-        // Delete the .sh file if there is any erroe
+        // Delete the .sh file if there is any error
         fs.unlink(`${file}`, (err) => {
           if (err) {
-            spinner.fail(`Error: ${error}`);
+            spinner.fail(`Error: ${err}`);
             process.exit(1);
           }
         });

@@ -59,7 +59,7 @@ describe("Git time traveler", () => {
 
   it("should execute the specified editor with the temporary file", () => {
     // Replace "vim" with the path to your preferred editor.
-    const editor = "CODE";
+    const editor = "code";
     const cmd = `${editor} tempfile`;
     return new Promise((resolve, reject) => {
       exec(cmd, (error) => {
@@ -100,7 +100,7 @@ describe("Git time traveler", () => {
     // Create a Git repository and add a commit to it.
     return expect(
       new Promise((resolve, reject) => {
-        const tmpdir = fs.mkdtempSync("/tmp");
+        const tmpdir = fs.mkdtempSync(path.join(process.cwd(), "temp-"));
         const repoPath = path.join(tmpdir, "repo");
         fs.mkdirSync(repoPath);
         process.chdir(repoPath);
