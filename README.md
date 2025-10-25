@@ -14,10 +14,11 @@ https://user-images.githubusercontent.com/82510209/219964886-bb020c32-d13f-479b-
 
 Git Time Travel is a powerful Node.js package that lets you manipulate the date and time of any previous Git commit in your repository. With Git Time Travel, you can easily correct mistakes or update information in your Git history without having to rewrite your entire commit history.Try Git Time Travel today and take control of your Git history!
 
-# Prerequisite
-**01 You have to use git bash to run this program. You can download git bash from [here](https://git-scm.com/downloads)**
+# Prerequisites
 
-**02 You should have a code editor like VS Code in your system.**
+- **Git Bash** (Windows) or any bash shell (Unix/Linux/macOS). Download from [here](https://git-scm.com/downloads)
+- **Node.js** version 18 or higher
+- A text editor (VS Code, nano, vim, etc.) - can be configured via `--editor` flag or `EDITOR` environment variable
 
 ## Installation
 
@@ -40,32 +41,136 @@ $ git-time-travel [options]
 ## Here are the available options for Git Time Travel:
 
 
-# Options:
+# Options
 
-    `-c, --commit`:                  Numer of commits to modify. If not specified, the last 5 commits will be used.
-    `-l, --limit` :                  specifies the number of chunks to split each commit into, with the default value being 20
-    `-d, --debug` :                  specifies whether to enable debug mode or not
-    `-a or --all` :                  specifies whether to change date for all available commits.
-    `-h, --help`  :                  output usage information
+| Flag | Description |
+|------|-------------|
+| `-c, --commits [number]` | Number of commits to modify (default: 5) |
+| `-l, --limit [number]` | Number of chunks to split each commit into (default: 20) |
+| `-e, --editor [editor]` | Specify the editor to use (overrides `EDITOR` and `VISUAL` env vars) |
+| `-d, --debug` | Enable debug mode for verbose output |
+| `-a, --all` | Change date for all available commits |
+| `--dry-run` | Preview changes without modifying git history |
+| `-h, --help` | Display usage information |
 
 
 # Examples
-## Here are some example commands for using Git Time Travel:
-### Change the date of the most recent commit to :
+
+### Change the date of the most recent commit
 
 ```bash
 $ git-time-travel -c 1
 ```
 
-## Code Editor will open with the following screen:
+### Preview changes without applying them
+
+```bash
+$ git-time-travel --dry-run
+```
+
+### Use a specific editor
+
+```bash
+$ git-time-travel --editor nano
+$ git-time-travel --editor vim
+```
+
+### Modify last 10 commits
+
+```bash
+$ git-time-travel -c 10
+```
+
+### Modify all commits in repository
+
+```bash
+$ git-time-travel --all
+```
+
+## How it Works
+
+1. Run the command with your desired options
+2. Code editor will open with the commit list:
 
 <img src="./screenShots/SS2.jpeg">
-<br />
-<br />
 
-## You have to change the date from the code editor and save it then come back to the git bash and press enter.
+3. Edit the dates in the format shown (YYYY-MM-DDTHH:MM:SS+HH:MM)
+4. Save the file and close the editor
+5. Press Enter in the terminal to apply changes
+6. That's it! Your commit dates have been updated.
 
-## That's it. You have successfully changed the date of the most recent commit.
+## Date Format
+
+Git Time Travel supports the following date formats:
+- **ISO 8601**: `2023-02-20T15:30:00+05:30`
+- **Git default**: `2023-02-20 15:30:00 +0530`
+
+## Troubleshooting
+
+### Editor not opening
+
+**Problem**: Error opening editor
+
+**Solution**:
+- Specify your editor explicitly: `git-time-travel --editor nano`
+- Or set the `EDITOR` environment variable:
+  ```bash
+  export EDITOR=nano  # Linux/macOS
+  set EDITOR=nano     # Windows CMD
+  ```
+
+### Invalid date format error
+
+**Problem**: Validation errors when processing dates
+
+**Solution**:
+- Ensure dates follow the format: `YYYY-MM-DDTHH:MM:SS+HH:MM`
+- Example: `2023-02-20T15:30:00+05:30`
+- Don't remove the pipe separators (`|`) between date, hash, and message
+
+### Not a git repo error
+
+**Problem**: "Not a git repo!" error
+
+**Solution**:
+- Navigate to a git repository directory before running the command
+- Verify with `git status`
+
+### Git Bash requirement (Windows)
+
+**Problem**: Script fails on Windows
+
+**Solution**:
+- Install Git Bash from [git-scm.com](https://git-scm.com/downloads)
+- Run the command from Git Bash terminal, not CMD or PowerShell
+
+### Force push after changes
+
+After modifying commit dates, you'll need to force push to update the remote:
+
+```bash
+git push -f origin YOUR_BRANCH_NAME
+```
+
+⚠️ **Warning**: Force pushing rewrites history. Make sure to coordinate with your team if working on a shared branch.
+
+## FAQ
+
+**Q: Can I undo changes after running git-time-travel?**
+
+A: Yes, use `git reflog` to find the previous state and reset:
+```bash
+git reflog
+git reset --hard HEAD@{n}  # Replace n with the appropriate number
+```
+
+**Q: Is it safe to use on shared branches?**
+
+A: Be cautious! Rewriting history on shared branches can cause issues for collaborators. Use `--dry-run` first and coordinate with your team.
+
+**Q: Does this work with signed commits?**
+
+A: Changing commit dates will invalidate GPG signatures. You'll need to re-sign commits if needed.
 
 
 Created with ❤️ by Souvik Sen
