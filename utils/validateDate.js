@@ -1,6 +1,6 @@
 /**
  * Validates if a string is a valid Git date format
- * Supports ISO 8601 format and Git's default format
+ * Supports multiple formats: ISO 8601, Git default, RFC 2822, Unix timestamp
  * @param {string} dateString - The date string to validate
  * @returns {boolean} True if valid, false otherwise
  */
@@ -17,9 +17,26 @@ export const isValidGitDate = (dateString) => {
   // Git default format: 2023-02-20 15:30:00 +0530
   const gitDefaultRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} [+-]\d{4}$/;
 
-  if (iso8601Regex.test(trimmedDate) || gitDefaultRegex.test(trimmedDate)) {
+  // RFC 2822 format: Mon, 20 Feb 2023 15:30:00 +0530
+  const rfc2822Regex = /^[A-Z][a-z]{2}, \d{1,2} [A-Z][a-z]{2} \d{4} \d{2}:\d{2}:\d{2} [+-]\d{4}$/;
+
+  // Unix timestamp (seconds since epoch)
+  const unixTimestampRegex = /^\d{10}$/;
+
+  if (
+    iso8601Regex.test(trimmedDate) ||
+    gitDefaultRegex.test(trimmedDate) ||
+    rfc2822Regex.test(trimmedDate)
+  ) {
     // Additional validation: check if it's a valid date
     const date = new Date(trimmedDate);
+    return !isNaN(date.getTime());
+  }
+
+  // Unix timestamp validation
+  if (unixTimestampRegex.test(trimmedDate)) {
+    const timestamp = parseInt(trimmedDate, 10);
+    const date = new Date(timestamp * 1000);
     return !isNaN(date.getTime());
   }
 
@@ -38,11 +55,15 @@ export const sanitizeDate = (dateString) => {
 
   const trimmedDate = dateString.trim();
 
-  // Only allow alphanumeric, spaces, hyphens, colons, plus/minus signs, and T/Z
-  const sanitized = trimmedDate.replace(/[^0-9a-zA-Z\s:+\-TZ]/g, '');
+  // Only allow alphanumeric, spaces, hyphens, colons, plus/minus signs, comma, and T/Z
+  const sanitized = trimmedDate.replace(/[^0-9a-zA-Z\s:+\-TZ,]/g, '');
 
   if (!isValidGitDate(sanitized)) {
-    throw new Error(`Invalid date format: "${trimmedDate}". Expected format: YYYY-MM-DDTHH:MM:SS+HH:MM or YYYY-MM-DD HH:MM:SS +HHMM`);
+    throw new Error(`Invalid date format: "${trimmedDate}". Supported formats:
+    - ISO 8601: YYYY-MM-DDTHH:MM:SS+HH:MM
+    - Git default: YYYY-MM-DD HH:MM:SS +HHMM
+    - RFC 2822: Mon, 20 Feb 2023 15:30:00 +0530
+    - Unix timestamp: 1234567890`);
   }
 
   return sanitized;
