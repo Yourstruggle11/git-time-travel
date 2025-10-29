@@ -8,7 +8,7 @@ import path from "path";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-describe("Git time traveler", () => {
+describe("Git time travel", () => {
   it("should detect if it is in a Git repository", () => {
     return expect(isGitRepo()).to.be.true;
   });
